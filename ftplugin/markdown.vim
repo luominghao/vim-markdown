@@ -779,12 +779,16 @@ function! s:MarkdownClearSyntaxVariables()
     endif
 endfunction
 
+let b:html_file_path='%' . '.html'
+let b:html_convert_cmd='pandoc --template /home/mike/Code/pandoc-templates-2.7.3/default.html5 -M pagetitle:" " -f gfm -t html -o ' . b:html_file_path . ' %'
+
 augroup Mkd
     " These autocmd calling s:MarkdownRefreshSyntax need to be kept in sync with
     " the autocmds calling s:MarkdownSetupFolding in after/ftplugin/markdown.vim.
     autocmd! * <buffer>
     autocmd BufWinEnter <buffer> call s:MarkdownRefreshSyntax(1)
     autocmd BufUnload <buffer> call s:MarkdownClearSyntaxVariables()
+    autocmd BufWritePost <buffer> execute "!" . b:html_convert_cmd
     autocmd BufWritePost <buffer> call s:MarkdownRefreshSyntax(0)
     autocmd InsertEnter,InsertLeave <buffer> call s:MarkdownRefreshSyntax(0)
     autocmd CursorHold,CursorHoldI <buffer> call s:MarkdownRefreshSyntax(0)
